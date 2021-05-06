@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = "randomstring"
 
 with open("db.json", "r", encoding='utf-8') as f:
-   teachers = json.load(f)[1]
+    goals, teachers = json.load(f)
 
 class MyForm(FlaskForm):
     name = StringField('name', [InputRequired()])
@@ -40,14 +40,23 @@ def all_teachers():
     return "Здесь будут преподаватели"
 
 @app.route('/goals/<goal>/')
-def goals(goal):
+def select_goal(goal):
     return "Здесь будет цель <goal>"
 
 @app.route('/profiles/<int:teacher_id>/')
 def teacher_profile(teacher_id):
     teacher = teachers[teacher_id]
-    print(teacher)
-    return render_template('profile.html', teacher=teacher)
+    teacher_goals = [goals[x] for x in teacher["goals"]]
+    days = teacher["free"]
+    # проверка в каких днях нет свободных мест
+    free_days = {}
+    for day in days.keys():
+        free_days[day] = all(x == False for x in teacher["free"][day].values())
+    return render_template('profile.html',
+                            teacher=teacher,
+                            goals=teacher_goals,
+                            days=days,
+                            free_days=free_days)
 
 @app.route('/request/')
 def request_select():
