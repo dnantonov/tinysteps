@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, render_template
 from wtforms.validators import InputRequired, Email
 from flask_wtf import FlaskForm
@@ -6,6 +8,9 @@ from wtforms import StringField
 
 app = Flask(__name__)
 app.secret_key = "randomstring"
+
+with open("db.json", "r", encoding='utf-8') as f:
+   teachers = json.load(f)[1]
 
 class MyForm(FlaskForm):
     name = StringField('name', [InputRequired()])
@@ -22,7 +27,9 @@ def render_index():
 def render_send():
     form = MyForm()
     if form.validate():
-        return "Форма в порядке"return "Форма не в порядке"
+        return "Форма в порядке"
+    else:
+        return "Форма не в порядке"
 
 @app.route('/')
 def index():
@@ -38,7 +45,9 @@ def goals(goal):
 
 @app.route('/profiles/<int:teacher_id>/')
 def teacher_profile(teacher_id):
-    return "Здесь будет преподаватель <teacher_id>"
+    teacher = teachers[teacher_id]
+    print(teacher)
+    return render_template('profile.html', teacher=teacher)
 
 @app.route('/request/')
 def request_select():
@@ -48,7 +57,7 @@ def request_select():
 def request_done():
     return "Заявка на подбор отправлена"
 
-@app.route('/booking/<int:teacher_id>/<str:day>/<str:time>/')
+@app.route('/booking/<int:teacher_id>/<day>/<time>/')
 def booking_teacher(teacher_id, day, time):
     return "здесь будет форма бронирования <teacher_id>"
 
@@ -57,4 +66,4 @@ def booking_done():
     return "заявка отправлена"
 
 
-app.run(port=8060, debug=True)
+app.run(port=5000, debug=True)
