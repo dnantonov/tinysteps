@@ -31,17 +31,21 @@ def render_send():
     else:
         return "Форма не в порядке"
 
+
 @app.route('/')
 def index():
     return "Здесь будет главная"
+
 
 @app.route('/all')
 def all_teachers():
     return "Здесь будут преподаватели"
 
+
 @app.route('/goals/<goal>/')
 def select_goal(goal):
     return "Здесь будет цель <goal>"
+
 
 @app.route('/profiles/<int:teacher_id>/')
 def teacher_profile(teacher_id):
@@ -51,12 +55,14 @@ def teacher_profile(teacher_id):
     # проверка в каких днях нет свободных мест
     free_days = {}
     for day in days.keys():
-        free_days[day] = all(x == False for x in teacher["free"][day].values())
+        free_days[day] = all(\
+            x == False for x in teacher["free"][day].values())
     return render_template('profile.html',
                             teacher=teacher,
                             goals=teacher_goals,
                             days=days,
                             free_days=free_days)
+
 
 @app.route('/request/')
 def request_select():
@@ -68,7 +74,7 @@ def request_done():
 
 @app.route('/booking/<int:teacher_id>/<day>/<time>/')
 def booking_teacher(teacher_id, day, time):
-    return "здесь будет форма бронирования <teacher_id>"
+    return render_template('booking.html')
 
 @app.route('/booking_done/')
 def booking_done():
