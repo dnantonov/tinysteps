@@ -7,118 +7,15 @@
         <article class="row">
           <div class="col-5"><img src="{{ teacher.picture }}" class="img-fluid" alt=""></div>
           <div class="col-7">
-
             <section class="teacher=info">
-
               <h1 class="h2">{{ teacher.name }}</h1>
               <a>{% for goal in goals %}<span class="badge badge-secondary mr-2 mb-4">{{ goal }}</span>{% endfor %}</a>
               <p>Рейтинг: {{ teacher.rating }} Ставка: {{ teacher.price }} / час</p>
               <p>{{ teacher.about }}</p>
-
             </section>
           </div>
-
             <section class="available col-12">
-
               <h4 class="mb-4 mt-5">Записаться на пробный урок</h4>
-              <!-- <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Пн</th>
-                    <th scope="col">Вт</th>
-                    <th scope="col">Ср</th>
-                    <th scope="col">Чт</th>
-                    <th scope="col">Пт</th>
-                    <th scope="col">Сб</th>
-                    <th scope="col">Вс</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">8:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['8:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['8:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['8:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['8:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['8:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['8:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['8:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">10:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['10:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['10:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['10:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['10:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['10:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['10:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['10:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">12:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['12:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['12:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['12:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['12:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['12:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['12:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['12:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">14:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['14:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['14:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['14:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['14:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['14:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['14:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['14:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">16:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['16:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['16:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['16:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['16:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['16:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['16:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['16:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">18:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['18:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['18:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['18:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['18:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['18:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['18:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['18:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">20:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['20:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['20:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['20:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['20:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['20:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['20:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['20:00'] }}</a></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">22:00</th>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.mon['22:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.tue['22:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.wed['22:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.thu['22:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.fri['22:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sat['22:00'] }}</a></td>
-                    <td><a href="/" class="btn btn-outline-success">{{ days.sun['22:00'] }}</a></td>
-                  </tr>
-                </tbody>
-              </table> -->
-
-
               <h6 class="mt-4">Понедельник</h6>
               {% if free_days.mon %}
                 <p>Нет свободных уроков</p>
@@ -126,12 +23,11 @@
                 {% for time in days.mon.items() %}
                     {% with lesson_time=time.0.split(':').0 %}
                       {% if time.1 %}
-                        <a href="/booking/{{ teacher.id }}/monday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                        <a href="/booking/{{ teacher.id }}/mon/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                       {% endif %}
                     {% endwith %}
                 {% endfor %}
               {% endif %}
-
 
               <h6 class="mt-4">Вторник</h6>
               {% if free_days.tue %}
@@ -140,7 +36,7 @@
                 {% for time in days.tue.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/tuesday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/tue/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -153,7 +49,7 @@
                 {% for time in days.wed.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/wednesday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/wed/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -166,7 +62,7 @@
                 {% for time in days.thu.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/thursday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/thu/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -179,7 +75,7 @@
                 {% for time in days.fri.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/friday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/fri/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -192,7 +88,7 @@
                 {% for time in days.sat.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/saturday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/sat/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -205,18 +101,15 @@
                 {% for time in days.sun.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/sunday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/sun/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
               {% endif %}
-
             </section>
-
           </div>
         </article>
       </div>
-
     </div>
   </main>
 {% endblock %}
