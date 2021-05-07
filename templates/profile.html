@@ -126,7 +126,7 @@
                 {% for time in days.mon.items() %}
                     {% with lesson_time=time.0.split(':').0 %}
                       {% if time.1 %}
-                        <a href="/booking/{{ teacher.id }}/monday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                        <a href="/booking/{{ teacher.id }}/mon/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                       {% endif %}
                     {% endwith %}
                 {% endfor %}
@@ -140,7 +140,7 @@
                 {% for time in days.tue.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/tuesday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/tue/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -153,7 +153,7 @@
                 {% for time in days.wed.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/wednesday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/wed/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -166,7 +166,7 @@
                 {% for time in days.thu.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/thursday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/thu/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -179,7 +179,7 @@
                 {% for time in days.fri.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/friday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/fri/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -192,7 +192,7 @@
                 {% for time in days.sat.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/saturday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/sat/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
@@ -205,7 +205,7 @@
                 {% for time in days.sun.items() %}
                   {% with lesson_time=time.0.split(':').0 %}
                     {% if time.1 %}
-                      <a href="/booking/{{ teacher.id }}/sunday/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
+                      <a href="/booking/{{ teacher.id }}/sun/{{ lesson_time }}/" class="btn btn-outline-success mr-2 mb-3">{{ time.0 }} свободно</a>
                     {% endif %}
                   {% endwith %}
                 {% endfor %}
