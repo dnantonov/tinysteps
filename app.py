@@ -2,7 +2,7 @@ import json
 from flask import Flask, render_template, request, redirect, url_for
 from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import StringField, RadioField
 
 
 app = Flask(__name__)
@@ -18,14 +18,16 @@ day_of_week = {
         'sun': 'Воскресенье'
 }
 
+goals_dict = {
+    'travel': 'Для путешествий',
+    'learn': 'Для школы',
+    'work': 'Для работы',
+    'move': 'Для переезда'
+}
+
+
 with open("db.json", "r", encoding='utf-8') as f:
     goals, teachers = json.load(f)
-
-
-class MyForm(FlaskForm):
-    # форма для заявки на бронирование урока
-    name = StringField('Имя', [InputRequired()])
-    phone = StringField('Ваш телефон', [Length(min=5, max=12)])
 
 
 @app.route('/')
@@ -73,9 +75,16 @@ def request_select():
     return render_template('request.html')
 
 
-@app.route('/request_done/')
+@app.route('/request_done/', methods=['GET', 'POST'])
 def request_done():
-    return render_template('request_done.html')
+    if request.method == 'POST':
+        goal_code = request.form.get('goal')
+        goal = goals_dict[goal_code]
+        time = request.form.get('time')
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+        return render_template('request_done.html', goal=goal, time=time,
+                               name=name, phone=phone)
 
 
 @app.route('/booking/<int:teacher_id>/<day>/<time>/')
@@ -83,11 +92,10 @@ def booking_teacher(teacher_id, day, time):
     """
     Функция отображения формы-заявки на обучение
     """
-    form = MyForm()
     selected_day = day_of_week[day]
     teacher = teachers[teacher_id]
     return render_template('booking.html', teacher_id=teacher_id, day=day, full_day=selected_day,
-                           time=time, teacher=teacher, form=form)
+                           time=time, teacher=teacher)
 
 
 @app.route('/booking_done/', methods=['GET', 'POST'])
