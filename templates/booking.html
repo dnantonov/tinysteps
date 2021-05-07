@@ -13,21 +13,16 @@
                 </div>
                 <hr/>
                 <div class="card-body mx-3">
+                    {{ form.csrf_token }}
                     <div class="row">
                         <input class="form-control" type="hidden" name="clientWeekday" value="{{ day }}">
                         <input class="form-control" type="hidden" name="clientTime" value="{{ time }}:00">
                         <input class="form-control" type="hidden" name="clientTeacher" value="{{ teacher_id }}">
                     </div>
-                    <label class="mb-1 mt-2" for="clientName">Вас зовут</label>
-                    <input class="form-control" type="text" name="clientName" id="clientName">
-                    <label class="mb-1 mt-2" for="clientPhone">Ваш телефон</label>
-                    <input class="form-control" type="tel"  name="clientPhone" id="clientPhone">
-
-<!--                    {{ form.csrf_token }}-->
-<!--                    {{ form.name.label(class_="mb-1 mt-2") }}-->
-<!--                    {{ form.name(class_="form-control") }}-->
-<!--                    {{ form.phone.label(class_="mb-1 mt-2") }}-->
-<!--                    {{ form.phone(class_="form-control") }}-->
+                    {{ form.name.label(class_="mb-1 mt-2") }}
+                    {{ form.name(class_="form-control") }}
+                    {{ form.phone.label(class_="mb-1 mt-2") }}
+                    {{ form.phone(class_="form-control") }}
                     <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
                 </div>
             </form>

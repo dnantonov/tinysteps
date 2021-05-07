@@ -9,21 +9,34 @@ app = Flask(__name__)
 app.secret_key = "my_super_secret_key"
 
 day_of_week = {
-        'mon': 'Понедельник',
-        'tue': 'Вторник',
-        'wed': 'Среда',
-        'thu': 'Четверг',
-        'fri': 'Пятница',
-        'sat': 'Суббота',
-        'sun': 'Воскресенье'
+    'mon': 'Понедельник',
+    'tue': 'Вторник',
+    'wed': 'Среда',
+    'thu': 'Четверг',
+    'fri': 'Пятница',
+    'sat': 'Суббота',
+    'sun': 'Воскресенье'
 }
 
-goals_dict = {
-    'travel': 'Для путешествий',
-    'learn': 'Для школы',
-    'work': 'Для работы',
-    'move': 'Для переезда'
-}
+
+class BookingForm(FlaskForm):
+    name = StringField("Вас зовут", [InputRequired()])
+    phone = StringField("Ваш телефон", [InputRequired()])
+
+
+class RequestForm(FlaskForm):
+    name = StringField("Вас зовут", [InputRequired()])
+    phone = StringField("Ваш телефон", [InputRequired()])
+    goal = RadioField(
+        'Какая цель занятий?',
+        choices=[('Для путешествий', 'Для путешествий'), ('Для школы', 'Для школы'),
+                 ('Для работы', 'Для работы'), ('Для переезда', 'Для переезда')]
+    )
+    time = RadioField(
+        'Сколько времени есть?',
+        choices=[('1-2 часа в неделю', '1-2 часа в неделю'), ('3-5 часов в неделю', '3-5 часов в неделю'),
+                 ('5-7 часов в неделю', '5-7 часов в неделю'), ('7-10 часов в неделю', '7-10 часов в неделю')]
+    )
 
 
 with open("db.json", "r", encoding='utf-8') as f:
@@ -72,14 +85,14 @@ def teacher_profile(teacher_id):
 
 @app.route('/request/')
 def request_select():
-    return render_template('request.html')
+    form = RequestForm()
+    return render_template('request.html', form=form)
 
 
 @app.route('/request_done/', methods=['GET', 'POST'])
 def request_done():
     if request.method == 'POST':
-        goal_code = request.form.get('goal')
-        goal = goals_dict[goal_code]
+        goal = request.form.get('goal')
         time = request.form.get('time')
         name = request.form.get('name')
         phone = request.form.get('phone')
@@ -92,10 +105,11 @@ def booking_teacher(teacher_id, day, time):
     """
     Функция отображения формы-заявки на обучение
     """
+    form = BookingForm()
     selected_day = day_of_week[day]
     teacher = teachers[teacher_id]
     return render_template('booking.html', teacher_id=teacher_id, day=day, full_day=selected_day,
-                           time=time, teacher=teacher)
+                           time=time, teacher=teacher, form=form)
 
 
 @app.route('/booking_done/', methods=['GET', 'POST'])
@@ -104,8 +118,8 @@ def booking_done():
     Функция отображения успешной заявки формы и сохранение данных в json
     """
     if request.method == 'POST':
-        name = request.form.get('clientName')
-        phone = request.form.get('clientPhone')
+        name = request.form.get('name')
+        phone = request.form.get('phone')
         day = day_of_week[request.form.get('clientWeekday')]
         time = request.form.get('clientTime')
         data = {'name': name, 'phone': phone, 'day': day, 'time': time}

@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d02f8b4a-b64b-412d-a29b-b2339f6f728f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/request.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/request.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/request_done.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/request_done.html" afterDir="false" />
-    </list>
+    <list default="true" id="d02f8b4a-b64b-412d-a29b-b2339f6f728f" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,12 +19,8 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="booking" />
-                    <option name="lastUsedInstant" value="1620379945" />
-                  </RecentBranch>
-                  <RecentBranch>
                     <option name="branchName" value="main" />
-                    <option name="lastUsedInstant" value="1620379944" />
+                    <option name="lastUsedInstant" value="1620394025" />
                   </RecentBranch>
                 </list>
               </option>
