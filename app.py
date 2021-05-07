@@ -60,11 +60,18 @@ def all_teachers():
 
 
 @app.route('/goals/<goal>/')
-def select_goal(goal):
+def teachers_by_goal(goal):
     """
     Функция отображения целейй
     """
-    return render_template('goal.html')
+    teachers_goal = []
+    # фильтруем преподавателей по целям обучения, добавляем их в новый список
+    for teacher in teachers:
+        if goal in teacher['goals']:
+            teachers_goal.append(teacher)
+    # сортируем список преодавателей по рейтингу
+    sorted_teachers = sorted(teachers_goal, key=lambda k: k['rating'])[::-1]
+    return render_template('goal.html', goal=goal, teachers=teachers_goal)
 
 
 @app.route('/profiles/<int:teacher_id>/')
@@ -85,17 +92,26 @@ def teacher_profile(teacher_id):
 
 @app.route('/request/')
 def request_select():
+    """
+    Функция отображения формы-заявки на консультацию
+    """
     form = RequestForm()
     return render_template('request.html', form=form)
 
 
 @app.route('/request_done/', methods=['GET', 'POST'])
 def request_done():
+    """
+    Функция отображения заявки на консультацию и сохранение данных в json
+    """
     if request.method == 'POST':
         goal = request.form.get('goal')
         time = request.form.get('time')
         name = request.form.get('name')
         phone = request.form.get('phone')
+        data = {"goal": goal, "time": time, "name": name, "phone": phone}
+        with open("request.json", "a", encoding='utf-8') as db:
+            json.dump(data, db, indent=4)
         return render_template('request_done.html', goal=goal, time=time,
                                name=name, phone=phone)
 
