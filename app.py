@@ -23,27 +23,40 @@ with open("db.json", "r", encoding='utf-8') as f:
 
 
 class MyForm(FlaskForm):
+    # форма для заявки на бронирование урока
     name = StringField('Имя', [InputRequired()])
     phone = StringField('Ваш телефон', [Length(min=5, max=12)])
 
 
 @app.route('/')
 def index():
-    return "Здесь будет главная"
+    """
+    Функция отображения главной страницы
+    """
+    return render_template('index.html')
 
 
 @app.route('/all')
 def all_teachers():
-    return "Здесь будут преподаватели"
+    """
+    Функция отображения страницы со всеми преподавателями
+    """
+    return render_template('all.html')
 
 
 @app.route('/goals/<goal>/')
 def select_goal(goal):
-    return "Здесь будет цель <goal>"
+    """
+    Функция отображения целейй
+    """
+    return render_template('goal.html')
 
 
 @app.route('/profiles/<int:teacher_id>/')
 def teacher_profile(teacher_id):
+    """
+    Функция отображения страницы профиля преподавателя
+    """
     teacher = teachers[teacher_id]
     teacher_goals = [goals[x] for x in teacher["goals"]]
     days = teacher["free"]
@@ -51,53 +64,48 @@ def teacher_profile(teacher_id):
     free_days = {}
     for day in days.keys():
         free_days[day] = all(x is False for x in teacher["free"][day].values())
-    return render_template('profile.html',
-                           teacher=teacher,
-                           goals=teacher_goals,
-                           days=days,
-                           free_days=free_days)
+    return render_template('profile.html', teacher=teacher, goals=teacher_goals,
+                           days=days, free_days=free_days)
 
 
 @app.route('/request/')
 def request_select():
-    return "Здесь будет заявка на подбор"
+    return render_template('request.html')
 
 
 @app.route('/request_done/')
 def request_done():
-    return "Заявка на подбор отправлена"
+    return render_template('request_done.html')
 
 
 @app.route('/booking/<int:teacher_id>/<day>/<time>/')
 def booking_teacher(teacher_id, day, time):
+    """
+    Функция отображения формы-заявки на обучение
+    """
     form = MyForm()
     selected_day = day_of_week[day]
     teacher = teachers[teacher_id]
-    return render_template('booking.html',
-                           teacher_id=teacher_id,
-                           day=day,
-                           full_day=selected_day,
-                           time=time,
-                           teacher=teacher,
-                           form=form)
+    return render_template('booking.html', teacher_id=teacher_id, day=day, full_day=selected_day,
+                           time=time, teacher=teacher, form=form)
 
 
 @app.route('/booking_done/', methods=['GET', 'POST'])
 def booking_done():
+    """
+    Функция отображения успешной заявки формы и сохранение данных в json
+    """
     if request.method == 'POST':
         name = request.form.get('clientName')
         phone = request.form.get('clientPhone')
         day = day_of_week[request.form.get('clientWeekday')]
         time = request.form.get('clientTime')
         data = {'name': name, 'phone': phone, 'day': day, 'time': time}
-
         with open("booking.json", "a", encoding='utf-8') as db:
             json.dump(data, db, indent=4)
-        return render_template('booking_done.html',
-                               name=name,
-                               phone=phone,
-                               day=day,
-                               time=time)
+        return render_template('booking_done.html', name=name, phone=phone, day=day, time=time)
+    else:
+        return render_template('booking.html')
 
 
 app.run(port=5000, debug=True)
