@@ -8,7 +8,7 @@ from wtforms import StringField, RadioField
 app = Flask(__name__)
 app.secret_key = "my_super_secret_key"
 
-day_of_week = {
+WEEKDAYS = {
     'mon': 'Понедельник',
     'tue': 'Вторник',
     'wed': 'Среда',
@@ -16,6 +16,13 @@ day_of_week = {
     'fri': 'Пятница',
     'sat': 'Суббота',
     'sun': 'Воскресенье'
+}
+
+ICONS = {
+    'travel': '⛱',
+    'relocate': '🚜',
+    'study': '🏫',
+    'work': '🏢'
 }
 
 
@@ -62,7 +69,7 @@ def all_teachers():
 @app.route('/goals/<goal>/')
 def teachers_by_goal(goal):
     """
-    Функция отображения целейй
+    Функция отображения целей
     """
     teachers_goal = []
     # фильтруем преподавателей по целям обучения, добавляем их в новый список
@@ -71,7 +78,10 @@ def teachers_by_goal(goal):
             teachers_goal.append(teacher)
     # сортируем список преодавателей по рейтингу
     sorted_teachers = sorted(teachers_goal, key=lambda k: k['rating'])[::-1]
-    return render_template('goal.html', goal=goal, teachers=teachers_goal)
+    # определяем иконку для цели и достаем название цели из словаря
+    icon = ICONS[goal]
+    goal = goals[goal]
+    return render_template('goal.html', goal=goal, icon=icon, teachers=sorted_teachers)
 
 
 @app.route('/profiles/<int:teacher_id>/')
@@ -122,7 +132,7 @@ def booking_teacher(teacher_id, day, time):
     Функция отображения формы-заявки на обучение
     """
     form = BookingForm()
-    selected_day = day_of_week[day]
+    selected_day = WEEKDAYS[day]
     teacher = teachers[teacher_id]
     return render_template('booking.html', teacher_id=teacher_id, day=day, full_day=selected_day,
                            time=time, teacher=teacher, form=form)
@@ -136,7 +146,7 @@ def booking_done():
     if request.method == 'POST':
         name = request.form.get('name')
         phone = request.form.get('phone')
-        day = day_of_week[request.form.get('clientWeekday')]
+        day = WEEKDAYS[request.form.get('clientWeekday')]
         time = request.form.get('clientTime')
         data = {'name': name, 'phone': phone, 'day': day, 'time': time}
         with open("booking.json", "a", encoding='utf-8') as db:
