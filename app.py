@@ -1,4 +1,5 @@
 import json
+import random
 from flask import Flask, render_template, request, redirect, url_for
 from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
@@ -22,7 +23,8 @@ ICONS = {
     'travel': '⛱',
     'relocate': '🚜',
     'study': '🏫',
-    'work': '🏢'
+    'work': '🏢',
+    'coding': '💻'
 }
 
 
@@ -55,7 +57,8 @@ def index():
     """
     Функция отображения главной страницы
     """
-    return render_template('index.html')
+    random.shuffle(teachers)
+    return render_template('index.html', teachers=teachers[:6])
 
 
 @app.route('/all')
