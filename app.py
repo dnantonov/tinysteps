@@ -25,6 +25,14 @@ WEEKDAYS = {
     'sun': 'Воскресенье'
 }
 
+GOALS = {
+    "travel": "Для путешествий",
+    "coding": "Для программирования",
+    "study": "Для учебы",
+    "work": "Для работы",
+    "relocate": "Для переезда"
+}
+
 ICONS = {
     'travel': '⛱',
     'relocate': '🚜',
@@ -131,15 +139,16 @@ def teacher_profile(teacher_id):
     """
     Функция отображения страницы профиля преподавателя
     """
-    teacher = teachers[teacher_id]
-    teacher_goals = [goals[x] for x in teacher["goals"]]
-    days = teacher["free"]
+    teacher = db.session.query(Teacher).get_or_404(teacher_id)
+    teacher_goals = [GOALS[x] for x in eval(teacher.goals)] # получаем список целей учителя по коду цели
+    days = eval(teacher.free) # преобазуем свободные даты для занятий из строки в словарь
     # проверка в каких днях нет свободных мест
     free_days = {}
     for day in days.keys():
-        free_days[day] = all(x is False for x in teacher["free"][day].values())
-    return render_template('profile.html', teacher=teacher, goals=teacher_goals,
-                           days=days, free_days=free_days)
+        free_days[day] = all(x is False for x in days[day].values())
+    return render_template('profile.html', teacher=teacher,
+                           goals=teacher_goals, days=days,
+                           free_days=free_days)
 
 
 @app.route('/request/')
