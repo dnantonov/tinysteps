@@ -4,10 +4,16 @@ from flask import Flask, render_template, request, redirect, url_for
 from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
 app.secret_key = "my_super_secret_key"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 WEEKDAYS = {
     'mon': 'Понедельник',
@@ -28,6 +34,43 @@ ICONS = {
 }
 
 
+class Teacher(db.Model):
+    __tablename__ = 'teacher'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    about = db.Column(db.Text)
+    rating = db.Column(db.Float)
+    picture = db.Column(db.String)
+    price = db.Column(db.Integer)
+    goals = db.Column(db.String)
+    free = db.Column(db.String)
+
+    bookings = db.relationship('Booking',  uselist=False, back_populates="teacher")
+
+
+class Booking(db.Model):
+    __tablename__ = 'booking'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    phone = db.Column(db.String, nullable=False)
+
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
+    teacher = db.relationship('Teacher', back_populates="bookings")
+
+
+class Request(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    surname = db.Column(db.String, nullable=False)
+    phone = db.Column(db.String, nullable=False)
+
+
+db.create_all()
+
+with open("db.json", "r", encoding='utf-8') as f:
+    goals, teachers = json.load(f)
+
+
 class BookingForm(FlaskForm):
     name = StringField("Вас зовут", [InputRequired()])
     phone = StringField("Ваш телефон", [InputRequired()])
@@ -46,10 +89,6 @@ class RequestForm(FlaskForm):
         choices=[('1-2 часа в неделю', '1-2 часа в неделю'), ('3-5 часов в неделю', '3-5 часов в неделю'),
                  ('5-7 часов в неделю', '5-7 часов в неделю'), ('7-10 часов в неделю', '7-10 часов в неделю')]
     )
-
-
-with open("db.json", "r", encoding='utf-8') as f:
-    goals, teachers = json.load(f)
 
 
 @app.route('/')
@@ -159,4 +198,5 @@ def booking_done():
         return render_template('booking.html')
 
 
-app.run(port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
