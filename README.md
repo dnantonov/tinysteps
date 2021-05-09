@@ -1,5 +1,5 @@
 ### Каталог репетиторов с заявками и временем работы
-#### Стек: Python, Flask, WTForms, Jinja, Bootstrap
+#### Стек: Python, Flask, WTForms, SQLAlchemy, Jinja, Bootstrap
 
 #### Сайт состоит из следующих страниц:
 
