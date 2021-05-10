@@ -5,6 +5,7 @@ from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from flask_migrate import Migrate
 
 
@@ -23,6 +24,14 @@ WEEKDAYS = {
     'fri': 'Пятница',
     'sat': 'Суббота',
     'sun': 'Воскресенье'
+}
+
+GOALS = {
+    "travel": "Для путешествий",
+    "coding": "Для программирования",
+    "study": "Для учебы",
+    "work": "Для работы",
+    "relocate": "Для переезда"
 }
 
 ICONS = {
@@ -59,6 +68,7 @@ class Booking(db.Model):
 
 
 class Request(db.Model):
+    __tablename__ = 'request'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     surname = db.Column(db.String, nullable=False)
@@ -113,17 +123,13 @@ def teachers_by_goal(goal):
     """
     Функция отображения целей
     """
-    teachers_goal = []
-    # фильтруем преподавателей по целям обучения, добавляем их в новый список
-    for teacher in teachers:
-        if goal in teacher['goals']:
-            teachers_goal.append(teacher)
-    # сортируем список преодавателей по рейтингу
-    sorted_teachers = sorted(teachers_goal, key=lambda k: k['rating'])[::-1]
+    # делаем запрос к БД, достаем преподавателей с нашей целью и сортируем по рейтингу
+    query = Teacher.query.filter(Teacher.goals.contains(goal))
+    teachers = query.order_by(Teacher.rating.desc()).all()
     # определяем иконку для цели и достаем название цели из словаря
     icon = ICONS[goal]
     goal = goals[goal]
-    return render_template('goal.html', goal=goal, icon=icon, teachers=sorted_teachers)
+    return render_template('goal.html', goal=goal, icon=icon, teachers=teachers)
 
 
 @app.route('/profiles/<int:teacher_id>/')
@@ -131,15 +137,16 @@ def teacher_profile(teacher_id):
     """
     Функция отображения страницы профиля преподавателя
     """
-    teacher = teachers[teacher_id]
-    teacher_goals = [goals[x] for x in teacher["goals"]]
-    days = teacher["free"]
+    teacher = db.session.query(Teacher).get_or_404(teacher_id)
+    teacher_goals = [GOALS[x] for x in eval(teacher.goals)] # получаем список целей учителя по коду цели
+    days = eval(teacher.free) # преобазуем свободные даты для занятий из строки в словарь
     # проверка в каких днях нет свободных мест
     free_days = {}
     for day in days.keys():
-        free_days[day] = all(x is False for x in teacher["free"][day].values())
-    return render_template('profile.html', teacher=teacher, goals=teacher_goals,
-                           days=days, free_days=free_days)
+        free_days[day] = all(x is False for x in days[day].values())
+    return render_template('profile.html', teacher=teacher,
+                           goals=teacher_goals, days=days,
+                           free_days=free_days)
 
 
 @app.route('/request/')
