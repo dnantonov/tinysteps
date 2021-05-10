@@ -5,7 +5,6 @@ from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 from flask_migrate import Migrate
 
 
@@ -106,16 +105,31 @@ def index():
     """
     Функция отображения главной страницы
     """
+    # делаем запрос к БД, получаем всех учитилей и перемешиваем их, чтобы получить случайных преподавателей
+    teachers = db.session.query(Teacher).all()
     random.shuffle(teachers)
     return render_template('index.html', teachers=teachers[:6])
 
 
-@app.route('/all')
+@app.route('/all/', methods=['GET', 'POST'])
 def all_teachers():
     """
     Функция отображения страницы со всеми преподавателями
     """
-    return render_template('all.html')
+    sort = request.form.get('sort')
+    if sort == "random":
+        teachers = db.session.query(Teacher).all()
+        random.shuffle(teachers)
+    elif sort == "rating":
+        teachers = db.session.query(Teacher).order_by(Teacher.rating.desc())
+    elif sort == "expensive":
+        teachers = db.session.query(Teacher).order_by(Teacher.price.desc())
+    elif sort == "cheap":
+        teachers = db.session.query(Teacher).order_by(Teacher.price)
+    else:
+        teachers = db.session.query(Teacher).all()
+    teachers_quantity = db.session.query(Teacher).count()
+    return render_template('all.html', teachers=teachers, teachers_quantity=teachers_quantity, sort=sort)
 
 
 @app.route('/goals/<goal>/')
