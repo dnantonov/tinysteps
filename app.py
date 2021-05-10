@@ -5,6 +5,7 @@ from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from flask_migrate import Migrate
 
 
@@ -67,6 +68,7 @@ class Booking(db.Model):
 
 
 class Request(db.Model):
+    __tablename__ = 'request'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     surname = db.Column(db.String, nullable=False)
@@ -121,17 +123,13 @@ def teachers_by_goal(goal):
     """
     Функция отображения целей
     """
-    teachers_goal = []
-    # фильтруем преподавателей по целям обучения, добавляем их в новый список
-    for teacher in teachers:
-        if goal in teacher['goals']:
-            teachers_goal.append(teacher)
-    # сортируем список преодавателей по рейтингу
-    sorted_teachers = sorted(teachers_goal, key=lambda k: k['rating'])[::-1]
+    # делаем запрос к БД, достаем преподавателей с нашей целью и сортируем по рейтингу
+    query = Teacher.query.filter(Teacher.goals.contains(goal))
+    teachers = query.order_by(Teacher.rating.desc()).all()
     # определяем иконку для цели и достаем название цели из словаря
     icon = ICONS[goal]
     goal = goals[goal]
-    return render_template('goal.html', goal=goal, icon=icon, teachers=sorted_teachers)
+    return render_template('goal.html', goal=goal, icon=icon, teachers=teachers)
 
 
 @app.route('/profiles/<int:teacher_id>/')
