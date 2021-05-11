@@ -70,7 +70,6 @@ class Request(db.Model):
     __tablename__ = 'request'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
-    surname = db.Column(db.String(40), nullable=False)
     phone = db.Column(db.String(15), nullable=False)
     goal = db.Column(db.String(15), nullable=False)
     time = db.Column(db.String(15), nullable=False)
@@ -79,20 +78,20 @@ db.create_all()
 
 
 class BookingForm(FlaskForm):
-    name = StringField("Вас зовут", [InputRequired()])
-    phone = StringField("Ваш телефон", [InputRequired()])
+    name = StringField("Вас зовут", validators=[InputRequired()])
+    phone = StringField("Ваш телефон", validators=[InputRequired()])
 
 
 class RequestForm(FlaskForm):
-    name = StringField("Вас зовут", [InputRequired()])
-    phone = StringField("Ваш телефон", [InputRequired()])
+    name = StringField("Вас зовут", validators=[InputRequired()])
+    phone = StringField("Ваш телефон", validators=[InputRequired()])
     goal = RadioField(
-        'Какая цель занятий?',
+        'Какая цель занятий?', validators=[InputRequired()],
         choices=[('Для путешествий', 'Для путешествий'), ('Для школы', 'Для школы'),
                  ('Для работы', 'Для работы'), ('Для переезда', 'Для переезда')]
     )
     time = RadioField(
-        'Сколько времени есть?',
+        'Сколько времени есть?', validators=[InputRequired()],
         choices=[('1-2 часа в неделю', '1-2 часа в неделю'), ('3-5 часов в неделю', '3-5 часов в неделю'),
                  ('5-7 часов в неделю', '5-7 часов в неделю'), ('7-10 часов в неделю', '7-10 часов в неделю')]
     )
@@ -160,30 +159,24 @@ def teacher_profile(teacher_id):
                            free_days=free_days)
 
 
-@app.route('/request/')
+@app.route('/request/', methods=['GET', 'POST'])
 def request_select():
     """
     Функция отображения формы-заявки на консультацию
     """
     form = RequestForm()
-    return render_template('request.html', form=form)
-
-
-@app.route('/request_done/', methods=['GET', 'POST'])
-def request_done():
-    """
-    Функция отображения заявки на консультацию и сохранение данных в json
-    """
     if request.method == 'POST':
         goal = request.form.get('goal')
         time = request.form.get('time')
         name = request.form.get('name')
         phone = request.form.get('phone')
-        data = {"goal": goal, "time": time, "name": name, "phone": phone}
-        with open("request.json", "a", encoding='utf-8') as db:
-            json.dump(data, db, indent=4)
+        req = Request(name=name, phone=phone, goal=goal, time=time)
+        db.session.add(req)
+        db.session.commit()
         return render_template('request_done.html', goal=goal, time=time,
                                name=name, phone=phone)
+    else:
+        return render_template('request.html', form=form)
 
 
 @app.route('/booking/<int:teacher_id>/<day>/<time>/', methods=['GET', 'POST'])
