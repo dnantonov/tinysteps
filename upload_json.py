@@ -1,3 +1,7 @@
+"""
+Скрипт для добавления в БД данных о преподавателях из db.json
+"""
+
 import json
 from app import Teacher, app, db, migrate
 
