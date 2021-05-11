@@ -1,11 +1,12 @@
 import json
 import random
+from collections import OrderedDict
+
 from flask import Flask, render_template, request, redirect, url_for
 from wtforms.validators import InputRequired, Length
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 from flask_migrate import Migrate
 
 
@@ -16,69 +17,65 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-WEEKDAYS = {
-    'mon': 'Понедельник',
-    'tue': 'Вторник',
-    'wed': 'Среда',
-    'thu': 'Четверг',
-    'fri': 'Пятница',
-    'sat': 'Суббота',
-    'sun': 'Воскресенье'
-}
 
-GOALS = {
-    "travel": "Для путешествий",
-    "coding": "Для программирования",
-    "study": "Для учебы",
-    "work": "Для работы",
-    "relocate": "Для переезда"
-}
+WEEKDAYS = OrderedDict({
+    "mon": {"short_ver": "Пн",
+            "full_ver": "Понедельник"},
+    "tue": {"short_ver": "Вт",
+            "full_ver": "Вторник"},
+    "wed": {"short_ver": "Ср",
+            "full_ver": "Среда"},
+    "thu": {"short_ver": "Чт",
+            "full_ver": "Четверг"},
+    "fri": {"short_ver": "Пт",
+            "full_ver": "Пятница"},
+    "sat": {"short_ver": "Сб",
+            "full_ver": "Суббота"},
+    "sun": {"short_ver": "Вс",
+            "full_ver": "Воскресенье"}
+})
 
-ICONS = {
-    'travel': '⛱',
-    'relocate': '🚜',
-    'study': '🏫',
-    'work': '🏢',
-    'coding': '💻'
-}
+GOALS = OrderedDict({
+    "travel": {"desc": "для путешествий", "icon": "⛱"},
+    "study": {"desc": "для учебы", "icon": "🏫"},
+    "work": {"desc": "для работы", "icon": "🏢"},
+    "relocate": {"desc": "для переезда", "icon": "🚜"},
+    "coding": {"desc": "для программирования", "icon": "💻"}
+})
 
 
 class Teacher(db.Model):
     __tablename__ = 'teacher'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    about = db.Column(db.Text)
+    name = db.Column(db.String(80), nullable=False)
+    about = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Float)
-    picture = db.Column(db.String)
-    price = db.Column(db.Integer)
-    goals = db.Column(db.String)
-    free = db.Column(db.String)
-
-    bookings = db.relationship('Booking',  uselist=False, back_populates="teacher")
-
+    picture = db.Column(db.String(80), unique=True, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    goals = db.Column(db.String, nullable=False)
+    free = db.Column(db.String, nullable=False)
+    bookings = db.relationship('Booking',  back_populates="teacher")
 
 class Booking(db.Model):
     __tablename__ = 'booking'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    phone = db.Column(db.String, nullable=False)
-
+    name = db.Column(db.String(40), nullable=False)
+    phone = db.Column(db.String(40), nullable=False)
+    day = db.Column(db.String(15), nullable=False)
+    time = db.Column(db.String(15), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
     teacher = db.relationship('Teacher', back_populates="bookings")
-
 
 class Request(db.Model):
     __tablename__ = 'request'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    surname = db.Column(db.String, nullable=False)
-    phone = db.Column(db.String, nullable=False)
-
+    name = db.Column(db.String(40), nullable=False)
+    surname = db.Column(db.String(40), nullable=False)
+    phone = db.Column(db.String(15), nullable=False)
+    goal = db.Column(db.String(15), nullable=False)
+    time = db.Column(db.String(15), nullable=False)
 
 db.create_all()
-
-with open("db.json", "r", encoding='utf-8') as f:
-    goals, teachers = json.load(f)
 
 
 class BookingForm(FlaskForm):
@@ -106,16 +103,31 @@ def index():
     """
     Функция отображения главной страницы
     """
+    # делаем запрос к БД, получаем всех учитилей и перемешиваем их, чтобы получить случайных преподавателей
+    teachers = db.session.query(Teacher).all()
     random.shuffle(teachers)
     return render_template('index.html', teachers=teachers[:6])
 
 
-@app.route('/all')
+@app.route('/all/', methods=['GET', 'POST'])
 def all_teachers():
     """
     Функция отображения страницы со всеми преподавателями
     """
-    return render_template('all.html')
+    sort = request.form.get('sort')
+    if sort == "random":
+        teachers = db.session.query(Teacher).all()
+        random.shuffle(teachers)
+    elif sort == "rating":
+        teachers = db.session.query(Teacher).order_by(Teacher.rating.desc())
+    elif sort == "expensive":
+        teachers = db.session.query(Teacher).order_by(Teacher.price.desc())
+    elif sort == "cheap":
+        teachers = db.session.query(Teacher).order_by(Teacher.price)
+    else:
+        teachers = db.session.query(Teacher).all()
+    teachers_quantity = db.session.query(Teacher).count()
+    return render_template('all.html', teachers=teachers, teachers_quantity=teachers_quantity, sort=sort)
 
 
 @app.route('/goals/<goal>/')
@@ -127,9 +139,8 @@ def teachers_by_goal(goal):
     query = Teacher.query.filter(Teacher.goals.contains(goal))
     teachers = query.order_by(Teacher.rating.desc()).all()
     # определяем иконку для цели и достаем название цели из словаря
-    icon = ICONS[goal]
-    goal = goals[goal]
-    return render_template('goal.html', goal=goal, icon=icon, teachers=teachers)
+    goal = GOALS[goal]
+    return render_template('goal.html', goal=goal, teachers=teachers)
 
 
 @app.route('/profiles/<int:teacher_id>/')
@@ -175,34 +186,28 @@ def request_done():
                                name=name, phone=phone)
 
 
-@app.route('/booking/<int:teacher_id>/<day>/<time>/')
+@app.route('/booking/<int:teacher_id>/<day>/<time>/', methods=['GET', 'POST'])
 def booking_teacher(teacher_id, day, time):
     """
     Функция отображения формы-заявки на обучение
     """
     form = BookingForm()
     selected_day = WEEKDAYS[day]
-    teacher = teachers[teacher_id]
-    return render_template('booking.html', teacher_id=teacher_id, day=day, full_day=selected_day,
-                           time=time, teacher=teacher, form=form)
-
-
-@app.route('/booking_done/', methods=['GET', 'POST'])
-def booking_done():
-    """
-    Функция отображения успешной заявки формы и сохранение данных в json
-    """
+    teacher = db.session.query(Teacher).get(teacher_id)
     if request.method == 'POST':
         name = request.form.get('name')
         phone = request.form.get('phone')
         day = WEEKDAYS[request.form.get('clientWeekday')]
         time = request.form.get('clientTime')
-        data = {'name': name, 'phone': phone, 'day': day, 'time': time}
-        with open("booking.json", "a", encoding='utf-8') as db:
-            json.dump(data, db, indent=4)
-        return render_template('booking_done.html', name=name, phone=phone, day=day, time=time)
+        booking = Booking(name=name, phone=phone, day=day['full_ver'], time=time, teacher=teacher)
+        db.session.add(booking)
+        db.session.commit()
+        return render_template('booking_done.html', name=name,
+                               phone=phone, day=day, time=time)
     else:
-        return render_template('booking.html')
+        return render_template('booking.html', teacher_id=teacher_id,
+                               day=day, selected_day=selected_day,
+                               time=time, teacher=teacher, form=form)
 
 
 if __name__ == '__main__':

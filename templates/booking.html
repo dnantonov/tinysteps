@@ -4,12 +4,12 @@
 <main class="container mt-3">
     <div class="row mt-5">
         <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
-            <form method="post" action="/booking_done/" class="card mb-3">
+            <form method="post" action="/booking/{{ teacher_id }}/{{ day }}/{{ time }}/" class="card mb-3">
                 <div class="card-body text-center pt-5">
                     <img src="{{ teacher.picture }}" class="mb-3" width="95" alt="">
                     <h2 class="h5 card-title mt-2 mb-2">{{ teacher.name }}</h2>
                     <p class="my-1">Запись на пробный урок</p>
-                    <p class="my-1">{{ full_day }}, {{ time }}:00</p>
+                    <p class="my-1">{{ selected_day.full_ver }}, {{ time }}:00</p>
                 </div>
                 <hr/>
                 <div class="card-body mx-3">
