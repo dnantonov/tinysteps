@@ -1,10 +1,9 @@
-import json
 import os
 import random
 from collections import OrderedDict
 
-from flask import Flask, render_template, request, redirect, url_for
-from wtforms.validators import InputRequired, Length
+from flask import Flask, render_template, request
+from wtforms.validators import InputRequired
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from flask_sqlalchemy import SQLAlchemy
@@ -12,7 +11,7 @@ from flask_migrate import Migrate
 
 
 app = Flask(__name__)
-app.secret_key = 'my_super_secret_key'
+app.secret_key = os.environ['SECRET_KEY']
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
