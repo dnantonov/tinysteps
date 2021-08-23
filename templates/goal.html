@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ icon }} {{ goal }} | TINYSTEPS{% endblock %}
+{% block title %}{{ goal.icon }} Преподаватели {{ goal.desc }} | TINYSTEPS{% endblock %}
 {% block content %}
 <main class="container mt-3">
   <h1 class="h1 text-center w-50 mx-auto mt-1 py-5 mb-4"><strong>{{ goal.icon }}<br />Преподаватели <br> {{ goal.desc|lower }}</strong></h1>
