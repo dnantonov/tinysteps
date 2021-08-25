@@ -11,7 +11,7 @@ from flask_migrate import Migrate
 
 
 app = Flask(__name__)
-app.secret_key = os.environ['SECRET_KEY']
+app.secret_key = 'my_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -149,7 +149,7 @@ def teacher_profile(teacher_id):
     """
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
     teacher_goals = [GOALS[x] for x in eval(teacher.goals)] # получаем список целей учителя по коду цели
-    days = eval(teacher.free) # преобазуем свободные даты для занятий из строки в словарь
+    days = eval(teacher.free)  # преобазуем свободные даты для занятий из строки в словарь
     # проверка в каких днях нет свободных мест
     free_days = {}
     for day in days.keys():
@@ -190,9 +190,8 @@ def booking_teacher(teacher_id, day, time):
     if request.method == 'POST':
         name = request.form.get('name')
         phone = request.form.get('phone')
-        day = WEEKDAYS[request.form.get('clientWeekday')]
-        time = request.form.get('clientTime')
-        booking = Booking(name=name, phone=phone, day=day['full_ver'], time=time, teacher=teacher)
+        week_day = WEEKDAYS[day]
+        booking = Booking(name=name, phone=phone, day=week_day['full_ver'], time=time, teacher=teacher)
         db.session.add(booking)
         db.session.commit()
         return render_template('booking_done.html', name=name,
