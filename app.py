@@ -11,7 +11,7 @@ from flask_migrate import Migrate
 
 
 app = Flask(__name__)
-app.secret_key = 'my_secret_key'
+app.secret_key = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
